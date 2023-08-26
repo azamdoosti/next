@@ -1,0 +1,7 @@
+npm install prisma --save-dev  //install
+
+npx prisma init  //initialize
+
+ npm prisma db pull
+
+ npx prisma generate
