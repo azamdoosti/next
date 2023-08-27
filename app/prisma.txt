@@ -2,6 +2,9 @@ npm install prisma --save-dev  //install
 
 npx prisma init  //initialize
 
- npm prisma db pull
+ npm prisma db pull  //update prisma and get latest changes
 
  npx prisma generate
+
+
+ npx prisma db push // update db baed on prisma

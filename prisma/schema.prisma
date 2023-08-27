@@ -44,6 +44,9 @@ model Customers {
   Country              String?                @db.NVarChar(15)
   Phone                String?                @db.NVarChar(24)
   Fax                  String?                @db.NVarChar(24)
+  Mobile               Int?
+  Active               Boolean?
+  Price                 Int?
   CustomerCustomerDemo CustomerCustomerDemo[]
   Orders               Orders[]
 
