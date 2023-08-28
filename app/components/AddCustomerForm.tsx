@@ -25,7 +25,15 @@ const AddCustomerForm = () => {
   } = useForm<customer>({
     resolver: zodResolver(customerSchema),
   });
-  const onSubmit = (data: any) => console.log(data);
+ const onSubmit = (data: any) => {
+    console.log(data);
+    fetch("api/customers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).then((response) => response.json());
+  };
+
   return (
     
 <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
