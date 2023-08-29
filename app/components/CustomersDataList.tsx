@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Minus, Trash2 } from "lucide-react";
 import { Plus } from "lucide-react";
 
 interface props {
@@ -47,14 +47,24 @@ const CustomersDataList = () => {
 
   return (
     <div>
+      <div className="flex flex-row justify-between">
       <Button
         variant="outline"
         onClick={() => router.push("/addcustomer")}
-        className="p-2 mb-4 h-10 "
+        className="flex  p-2 mb-4 h-10 "
       >
-        <Plus className="mr-2 h-4 w-4" />
+        <Minus className="mr-2 h-4 w-4" />
         Add Record
       </Button>
+      <Button
+        variant="outline"
+        onClick={() => router.push("/addcustomer")}
+        className="flex  p-2 mb-4 h-10 "
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        Delete Record
+      </Button>
+      </div>
       <table className="table-auto w-full">
         <thead className="text-xs font-semibold h-12 uppercase text-blue-500 bg-gray-50">
           <tr className="border shadow  ">
@@ -68,7 +78,12 @@ const CustomersDataList = () => {
         <tbody className="text-sm divide-y divide-gray-100">
           {data?.map((item) => (
             <tr className="border hover:bg-slate-100" key={item.CustomerID}>
-              <td className="p-4 whitespace-nowrap">{item.CustomerID}</td>
+              <td className="p-4 whitespace-nowrap"> 
+              <div className="flex items-center">
+                        <input id="checkbox-table-search-1" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        <label htmlFor="checkbox-table-search-1" className="sr-only">checkbox</label>
+                    </div>
+                    {item.CustomerID}</td>
               <td className="p-4 whitespace-nowrap">{item.CompanyName}</td>
               <td className="p-4 whitespace-nowrap">{item.City}</td>
               <td className="p-4 whitespace-nowrap">{item.Country}</td>

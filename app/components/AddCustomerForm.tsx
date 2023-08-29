@@ -8,14 +8,19 @@ import error from "next/error";
 const AddCustomerForm = () => {
   const customerSchema = z.object({
     CustomerID: z.string().min(2),
-    CompanyName: z.number(),
+    CompanyName: z.string(),
     City: z.string(),
     Country: z.string(),
-    Phone: z.string(),
-    Moblie: z.number(),
+    Phone: z.string().min(12),
+    Moblie: z.number().min(15),
     Active: z.boolean(),
     Price: z.number(),
-  });
+    email:z.string().email(),
+    password:z.string().min(10).max(15),
+    confirmPassword: z.string().min(10).max(15),
+  }).refine ((data)=> data.password=== data.confirmPassword , {message:"Password do no match",path :["confirmPassword"]})
+
+  
   // extracting the type
   type customer = z.infer<typeof customerSchema>;
   const {
