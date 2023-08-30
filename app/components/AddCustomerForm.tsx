@@ -6,25 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import error from "next/error";
 
 const AddCustomerForm = () => {
-  const customerSchema = z
-    .object({
-      CustomerID: z.string().min(2),
-      CompanyName: z.string(),
-      City: z.string(),
-      Country: z.string(),
-      Phone: z.string().min(12),
-      Moblie: z.number().min(15),
-      Active: z.boolean(),
-      Price: z.number(),
-      email: z.string().email(),
-      password: z.string().min(10).max(15),
-      confirmPassword: z.string().min(10).max(15),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Password do no match",
-      path: ["confirmPassword"],
-    });
-
+  const customerSchema = z.object({
+    CustomerID: z.string().min(2),
+    CompanyName: z.number(),
+    City: z.string(),
+    Country: z.string(),
+    Phone: z.string(),
+    Moblie: z.number(),
+    Active: z.boolean(),
+    Price: z.number(),
+  });
   // extracting the type
   type customer = z.infer<typeof customerSchema>;
   const {
@@ -34,66 +25,41 @@ const AddCustomerForm = () => {
   } = useForm<customer>({
     resolver: zodResolver(customerSchema),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
-    fetch("api/customers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((response) => response.json());
-  };
-
+  const onSubmit = (data: any) => console.log(data);
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <form
-            className="flex flex-col max-w-md mx-auto"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div>
-              <h1 className="flex flex-col items-center m-4  text-2xl font-semibold">
-                Add New customer
-              </h1>
-            </div>
-            <input
-              className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none "
-              placeholder="CustomerID"
-              {...register("CustomerID")}
-            />
-            {errors.CustomerID && (
-              <p className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none">
-                Enter CustomerID
-              </p>
-            )}
-            <input
-              className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none "
-              placeholder="CompanyName"
-              {...register("CompanyName")}
-            />
-            <input
-              className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none "
-              placeholder="City"
-              {...register("City")}
-            />
-            <input
-              className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none "
-              placeholder="Country"
-              {...register("Country")}
-            />
-            <input
-              className="block m-2 w-full px-5 py-2 border rounded-lg bg-white shadow-lg placeholder-gray-400 text-gray-700 focus:ring focus:outline-none "
-              placeholder="Phone"
-              {...register("Phone")}
-            />
-            <Button className=" m-2 rounded-lg bg-blue-300 text-blue-900 focus:ring focus:outline-none w-full text-l font-semibold transition-colors ">
-              Submit
-            </Button>
-          </form>
-        </div>
-      </div>
-    </div>
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <input
+        className="border p-2 m-2 rounded-lg "
+        placeholder="CustomerID"
+        {...register("CustomerID")}
+      />
+      {errors.CustomerID && (
+        <p className="p-2 m-2 text-red-300">Enter CustomerID</p>
+      )}
+      <input
+        className="border p-2 m-2 rounded-lg "
+        placeholder="CompanyName"
+        {...register("CompanyName")}
+      />
+      <input
+        className="border p-2 m-2 rounded-lg "
+        placeholder="City"
+        {...register("City")}
+      />
+      <input
+        className="border p-2 m-2 rounded-lg "
+        placeholder="Country"
+        {...register("Country")}
+      />
+      <input
+        className="border p-2 m-2 rounded-lg "
+        placeholder="Phone"
+        {...register("Phone")}
+      />
+      <Button type="submit" variant={"default"}>
+        Submit
+      </Button>
+    </form>
   );
 };
 export default AddCustomerForm;

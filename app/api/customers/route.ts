@@ -14,8 +14,6 @@ const getCustomers = await prisma.customers.findMany()
 return NextResponse.json(getCustomers)
 }
 
-export async function POST(request: NextRequest) {
 
     const data= await request.json()
 }
-
