@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client'
 
 export async function GET(request: Request) {
+    
 const prisma = new PrismaClient()
 
 // select  : findMany
@@ -11,5 +12,10 @@ const prisma = new PrismaClient()
 // Query returns User or null
 const getCustomers = await prisma.customers.findMany()
 return NextResponse.json(getCustomers)
+}
+
+export async function POST(request: NextRequest) {
+
+    const data= await request.json()
 }
 
