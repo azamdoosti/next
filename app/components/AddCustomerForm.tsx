@@ -4,8 +4,12 @@ import { useForm } from "react-hook-form";
 import { z } from "Zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import error from "next/error";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const AddCustomerForm = () => {
+  const router = useRouter();
   const customerSchema = z.object({
     CustomerID: z.string().min(2),
     CompanyName: z.string(),
@@ -32,13 +36,21 @@ const AddCustomerForm = () => {
   } = useForm<customer>({
     resolver: zodResolver(customerSchema),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
-    fetch("api/customers", {
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const onSubmit = async (data: any) => {
+    setSaving(true);
+    // console.log(data);
+    await fetch("api/customers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }); //.then((response) => response.json());
+    }).then((response) => {
+      console.log(response);
+      setSaving(false);
+      setMessage("customer saved dsuccessfully");
+      setTimeout(() => router.push("/customers"), 1500);
+    });
   };
 
   return (
@@ -87,7 +99,9 @@ const AddCustomerForm = () => {
             />
             <Button className=" m-2 rounded-lg bg-blue-300 text-blue-900 focus:ring focus:outline-none w-full text-l font-semibold transition-colors ">
               Submit
+              {saving && <Loader2 className="mr-2 h-4 w-4 m-4 animate-spin" />}
             </Button>
+            {message && <p>{message}</p>}
           </form>
         </div>
       </div>

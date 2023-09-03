@@ -46,7 +46,8 @@ model Customers {
   Fax                  String?                @db.NVarChar(24)
   Mobile               Int?
   Active               Boolean?
-  Price                 Int?
+  Price                Int?
+  id                   Int                    @default(autoincrement())
   CustomerCustomerDemo CustomerCustomerDemo[]
   Orders               Orders[]
 
