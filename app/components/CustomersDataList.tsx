@@ -4,7 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Divide, Minus, SearchIcon, Trash2 } from "lucide-react";
+import {
+  Divide,
+  Minus,
+  Pencil,
+  SearchIcon,
+  Settings,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Plus } from "lucide-react";
 import Search from "./Search";
 import { PrismaClient } from "@prisma/client";
@@ -19,8 +27,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface props {
+  id: number;
   CustomerID: string;
   CompanyName: string;
   ContactName: string;
@@ -35,6 +54,7 @@ interface props {
 }
 
 const CustomersDataList = () => {
+  const [deletedList, setdeletedList] = useState<any>([]);
   const [searchedCustomerID, setsearchedCustomerID] = useState("");
   const router = useRouter();
   const handleRemoveButton = () => {};
@@ -67,17 +87,38 @@ const CustomersDataList = () => {
       body: JSON.stringify(data),
     });
   };
-  const handleDelete = async (CustomerID: string) => {
+
+  const handleDelete = async (CustomerID: string[]) => {
     await fetch("api/customers", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(CustomerID),
     });
-    // alert(CustomerID);
+    // Alert(CustomerID);
   };
+
   const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setsearchedCustomerID(e.target.value);
   };
+  const handleCheckbox = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: string
+  ) => {
+    console.log(event.target.checked);
+    deletedList;
+    if (event.target.checked === true) setdeletedList([...deletedList, id]);
+    else {
+      var array = [...deletedList]; // make a separate copy of the array
+      var index = array.indexOf(id);
+      if (index !== -1) {
+        array.splice(index, 1);
+        setdeletedList(array);
+      }
+    }
+    // setdeletedList((deletedList) => [...deletedList, id]);
+    // setdeletedList(event.target.checked)
+  };
+
   /* 
   if (isLoading)
     return (
@@ -94,6 +135,9 @@ const CustomersDataList = () => {
   return (
     <div>
       <div className="flex flex-row justify-between">
+        {deletedList.map((item: string) => (
+          <p key={item.id}>{item}</p>
+        ))}
         <Button
           variant="outline"
           onClick={() => router.push("/addcustomer")}
@@ -114,14 +158,35 @@ const CustomersDataList = () => {
         </div>
         <p>{searchedCustomerID}</p>
         {/* <Search /> */}
-        <Button
-          variant="outline"
-          onClick={() => router.push("/addcustomer")}
-          className="flex  p-2 mb-4 h-10 "
-        >
-          <Minus className="mr-2 h-4 w-4" />
-          Delete Record
-        </Button>
+
+        {deletedList.length !== 0 && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                // onClick={() => router.push("/addcustomer")}
+                className="flex  p-2 mb-4 h-10 "
+              >
+                <Minus className="mr-2 h-4 w-4" />
+                Delete {deletedList.length} Records
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Do you want to delete this customer?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={(e) => handleDelete(deletedList)}>
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
       {isLoading ? (
         <div className="flex items-center space-x-4">
@@ -136,9 +201,16 @@ const CustomersDataList = () => {
         <table className="table-auto w-full">
           <thead className="text-xs font-semibold h-12 uppercase text-blue-500 bg-gray-50">
             <tr className="border shadow  ">
-              <th className="p-4 text-left whitespace-nowrap"> Select </th>
+              <input
+                id="checkbox-2"
+                type="checkbox"
+                value=""
+                className="m-4 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+
+              <th className="p-4 text-left whitespace-nowrap"> ID </th>
               <th className="p-4 text-left whitespace-nowrap"> CustomerID </th>
-              <th className="p-4 text-left whitespace-nowrap"> CompanyName </th>
+              <th className="p-4 text-left whitespace-nowrap">CompanyName</th>
               <th className="p-4 text-left whitespace-nowrap"> City </th>
               <th className="p-4 text-left whitespace-nowrap"> Country </th>
               <th className="p-4 text-left whitespace-nowrap"> Phone </th>
@@ -149,38 +221,49 @@ const CustomersDataList = () => {
               <tr className="border hover:bg-slate-100" key={item.CustomerID}>
                 <td>
                   <input
+                    onChange={(e) => handleCheckbox(e, item.id)}
                     id="checkbox-2"
                     type="checkbox"
-                    value=""
                     className="ml-4  w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                 </td>
-                <td className="p-4 whitespace-nowrap">
-                  {/*  <div className="flex items-center">
-          <input
-            id="checkbox-table-search-1"
-            type="checkbox"
-            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          />
-          <label htmlFor="checkbox-table-search-1" className="sr-only">
-            checkbox
-          </label>
-        </div> */}
-                  {item.CustomerID}
-                </td>
+                <td className="p-4 whitespace-nowrap">{item.id}</td>
+                <td className="p-4 whitespace-nowrap">{item.CustomerID}</td>
                 <td className="p-4 whitespace-nowrap">{item.CompanyName}</td>
                 <td className="p-4 whitespace-nowrap">{item.City}</td>
                 <td className="p-4 whitespace-nowrap">{item.Country}</td>
                 <td className="p-4 whitespace-nowrap">{item.Phone}</td>
-                <td className="p-4 whitespace-nowrap">
-                  {/* <input
-          id="checkbox-2"
-          type="checkbox"
-          value=""
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-        /> */}
-                </td>
+                <td className="p-4 whitespace-nowrap"></td>
                 <td>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Setting
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel>
+                        Edit or Delete customer
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          <span>Edit</span>
+                          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <X className="mr-2 h-4 w-4" />
+                          <span>Delete</span>
+                          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </td>
+                <td className="p-4 whitespace-nowrap">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -188,7 +271,7 @@ const CustomersDataList = () => {
                         onClick={handleRemoveButton}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Remove
+                        Delete
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -201,7 +284,7 @@ const CustomersDataList = () => {
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={(e) => handleDelete(item.CustomerID)}
+                          onClick={(e) => handleDelete([item.id])}
                         >
                           Delete
                         </AlertDialogAction>
@@ -217,5 +300,4 @@ const CustomersDataList = () => {
     </div>
   );
 };
-
 export default CustomersDataList;

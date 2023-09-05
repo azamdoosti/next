@@ -8,10 +8,10 @@ import { PrismaClient } from "@prisma/client";
 // Query returns User or null
 export async function DELETE(request: Request) {
   const prisma = new PrismaClient();
-  const deletedCustomerID = await request.json();
-  const deletedCustomer = await prisma.customers.delete({
+  const deletedCustomerID: number[] = await request.json();
+  const deletedCustomer = await prisma.customers.deleteMany({
     where: {
-      CustomerID: deletedCustomerID,
+      id: { in: deletedCustomerID },
     },
   });
   return NextResponse.json({ status: "Done" });
