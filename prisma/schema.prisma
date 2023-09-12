@@ -48,7 +48,9 @@ model Customers {
   Active               Boolean?
   Price                Int?
   id                   Int                    @default(autoincrement())
+  countryID            Int?
   CustomerCustomerDemo CustomerCustomerDemo[]
+  CustomerCountry      CustomerCountry?       @relation(fields: [countryID], references: [countryID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Customers_Country")
   Orders               Orders[]
 
   @@index([City], map: "City")
@@ -201,4 +203,34 @@ model Territories {
   RegionID             Int
   EmployeeTerritories  EmployeeTerritories[]
   Region               Region                @relation(fields: [RegionID], references: [RegionID], onUpdate: NoAction, map: "FK_Territories_Region")
+}
+
+model CustomerCountry {
+  countryID        Int                @id(map: "PK_Country") @default(autoincrement())
+  countryName      String?            @db.NVarChar(15)
+  languageID       Int?
+  Country_Province Country_Province[]
+  Languages        Languages?         @relation(fields: [languageID], references: [languageID], onDelete: NoAction, onUpdate: NoAction, map: "FK_CustomerCountry_Languages")
+  Customers        Customers[]
+}
+
+model Languages {
+  languageID      Int               @id(map: "PK_Languages") @default(autoincrement())
+  languageName    String?           @db.NVarChar(15)
+  CustomerCountry CustomerCountry[]
+}
+
+model Country_Province {
+  countryID       Int
+  provinceID      Int
+  CustomerCountry CustomerCountry @relation(fields: [countryID], references: [countryID], onUpdate: NoAction, map: "FK_Country_Province_CustomerCountry")
+  Provinces       Provinces       @relation(fields: [provinceID], references: [provinceID], onUpdate: NoAction, map: "FK_Country_Province_Provinces")
+
+  @@id([countryID, provinceID], map: "PK_Country_Province")
+}
+
+model Provinces {
+  provinceID       Int                @id(map: "PK_Provinces") @default(autoincrement())
+  provinceName     String?            @db.NVarChar(50)
+  Country_Province Country_Province[]
 }

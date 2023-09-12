@@ -40,8 +40,8 @@ import {
 
 interface props {
   id: number;
-  CustomerID: string;
   CompanyName: string;
+  CustomerID: string;
   ContactName: string;
   ContactTitle: string;
   Address: string;
@@ -51,6 +51,24 @@ interface props {
   Country: string;
   Phone: string;
   Fax: string;
+  countryID: number;
+  CustomerCountry: {
+    countryName: string;
+    Languages: {
+      languageName: string;
+    };
+    Country_Province: [
+      Provinces: {
+        provinceName: string;
+      }
+    ];
+  };
+}
+
+interface prop {
+  Provinces: {
+    provinceName: string;
+  };
 }
 
 const CustomersDataList = () => {
@@ -211,9 +229,12 @@ const CustomersDataList = () => {
               <th className="p-4 text-left whitespace-nowrap"> ID </th>
               <th className="p-4 text-left whitespace-nowrap"> CustomerID </th>
               <th className="p-4 text-left whitespace-nowrap">CompanyName</th>
+              <th className="p-4 text-left whitespace-nowrap">CountryName </th>
+              <th className="p-4 text-left whitespace-nowrap">Language</th>
               <th className="p-4 text-left whitespace-nowrap"> City </th>
-              <th className="p-4 text-left whitespace-nowrap"> Country </th>
+
               <th className="p-4 text-left whitespace-nowrap"> Phone </th>
+              <th className="p-4 text-left whitespace-nowrap"> Provinces </th>
             </tr>
           </thead>
           <tbody className="text-sm divide-y divide-gray-100">
@@ -230,10 +251,20 @@ const CustomersDataList = () => {
                 <td className="p-4 whitespace-nowrap">{item.id}</td>
                 <td className="p-4 whitespace-nowrap">{item.CustomerID}</td>
                 <td className="p-4 whitespace-nowrap">{item.CompanyName}</td>
+                <td className="p-4 whitespace-nowrap">
+                  {item.CustomerCountry.countryName}
+                </td>
+                <td className="p-4 whitespace-nowrap">
+                  {item.CustomerCountry.Languages.languageName}
+                </td>
                 <td className="p-4 whitespace-nowrap">{item.City}</td>
-                <td className="p-4 whitespace-nowrap">{item.Country}</td>
+
                 <td className="p-4 whitespace-nowrap">{item.Phone}</td>
-                <td className="p-4 whitespace-nowrap"></td>
+                <td className="p-4 whitespace-nowrap">
+                  {item.CustomerCountry.Country_Province.map((item: any) => {
+                    return <div>{item.Provinces.provinceName}</div>;
+                  })}
+                </td>
                 <td>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

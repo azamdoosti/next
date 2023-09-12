@@ -32,6 +32,27 @@ export async function GET(request: Request) {
         contains: search,
       },
     },
+    include: {
+      CustomerCountry: {
+        select: {
+          Country_Province: {
+            select: {
+              Provinces: {
+                select: {
+                  provinceName: true,
+                },
+              },
+            },
+          },
+          countryName: true,
+          Languages: {
+            select: {
+              languageName: true,
+            },
+          },
+        },
+      },
+    },
 
     orderBy: {
       id: "desc",
